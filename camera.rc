@@ -1,0 +1,297 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Chinese (P.R.C.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 4, 2\r\n"
+    "#pragma code_page(936)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\camera.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""l.chs\\afxres.rc""          // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// 24
+//
+
+1                       24      MOVEABLE PURE   "res\\camera.exe.manifest"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\camera.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_CAMERA_DIALOG DIALOGEX 0, 0, 685, 513
+STYLE WS_POPUP | WS_VISIBLE
+EXSTYLE WS_EX_APPWINDOW
+FONT 9, "宋体", 0, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_PICL,"Static",SS_BITMAP,46,66,140,177
+    CONTROL         "",IDC_PICR,"Static",SS_BITMAP,251,66,424,320
+    LTEXT           "对比门限值:",IDC_STATIC,63,464,54,12,NOT WS_VISIBLE
+    COMBOBOX        IDC_COMBO_THRESHOLD,9,464,54,97,CBS_DROPDOWNLIST | 
+                    CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Static",IDC_STATIC_PHOTO,"Static",SS_LEFTNOWORDWRAP | 
+                    SS_CENTERIMAGE | WS_GROUP,47,40,147,24
+    CONTROL         "Static",IDC_STATIC_IMAGE,"Static",SS_LEFTNOWORDWRAP | 
+                    SS_CENTERIMAGE | WS_GROUP,251,40,330,24
+    CONTROL         "Static",IDC_STATIC_OUTPUT,"Static",SS_LEFTNOWORDWRAP | 
+                    SS_CENTERIMAGE | SS_SUNKEN | WS_GROUP,3,472,679,38
+    GROUPBOX        "",IDC_STATIC,3,37,234,429
+    GROUPBOX        "",IDC_STATIC,246,37,436,429
+    LTEXT           "姓名:",IDC_STATIC_NAME,9,260,68,24,SS_CENTERIMAGE
+    CONTROL         "***",IDC_STATIC_NAMEX,"Static",SS_LEFTNOWORDWRAP | 
+                    SS_CENTERIMAGE | SS_SUNKEN | WS_GROUP,77,260,154,24
+    LTEXT           "姓别:",IDC_STATIC_SEX,9,294,68,24,SS_CENTERIMAGE
+    CONTROL         "**",IDC_STATIC_SEXX,"Static",SS_LEFTNOWORDWRAP | 
+                    SS_CENTERIMAGE | SS_SUNKEN | WS_GROUP,77,294,154,24
+    LTEXT           "民族:",IDC_STATIC_NATION,9,328,68,24,SS_CENTERIMAGE
+    CONTROL         "**",IDC_STATIC_NATIONX,"Static",SS_LEFTNOWORDWRAP | 
+                    SS_CENTERIMAGE | SS_SUNKEN | WS_GROUP,77,328,154,24
+    LTEXT           "出生日期:",IDC_STATIC_BIR,9,362,68,24,SS_CENTERIMAGE
+    CONTROL         "YYYY-MM-DD",IDC_STATIC_BIRX,"Static",SS_LEFTNOWORDWRAP | 
+                    SS_CENTERIMAGE | SS_SUNKEN | WS_GROUP,77,362,154,24
+    LTEXT           "有效期限:",IDC_STATIC_DATE,9,396,68,24,SS_CENTERIMAGE
+    CONTROL         "YYYY-MM-DD",IDC_STATIC_DATEX,"Static",SS_LEFTNOWORDWRAP | 
+                    SS_CENTERIMAGE | SS_SUNKEN | WS_GROUP,77,396,154,24
+    LTEXT           "身份证号:",IDC_STATIC_ID,9,430,68,24,SS_CENTERIMAGE
+    CONTROL         "******************",IDC_STATIC_IDX,"Static",
+                    SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | SS_SUNKEN | 
+                    WS_GROUP,77,430,154,24
+    LTEXT           "票号:",IDC_STATIC_NUMBER,255,396,68,24,SS_CENTERIMAGE
+    CONTROL         "*******",IDC_STATIC_NUMBERX,"Static",SS_LEFTNOWORDWRAP | 
+                    SS_CENTERIMAGE | SS_SUNKEN | WS_GROUP,323,396,127,24
+    LTEXT           "始发站:",IDC_STATIC_STATION,479,396,68,24,
+                    SS_CENTERIMAGE
+    CONTROL         "***",IDC_STATIC_STATIONX,"Static",SS_LEFTNOWORDWRAP | 
+                    SS_CENTERIMAGE | SS_SUNKEN | WS_GROUP,547,396,127,24
+    LTEXT           "发车时间:",IDC_STATIC_STARTTIME,255,430,68,24,
+                    SS_CENTERIMAGE
+    CONTROL         "YYYY-MM-DD HH:MM",IDC_STATIC_STARTTIMEX,"Static",
+                    SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | SS_SUNKEN | 
+                    WS_GROUP,323,430,127,24
+    LTEXT           "当前时间:",IDC_STATIC_TIME,479,430,68,24,SS_CENTERIMAGE
+    CONTROL         "2015-08-16 11:23",IDC_STATIC_TIMEX,"Static",
+                    SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | SS_SUNKEN | 
+                    WS_GROUP,547,430,127,24
+    CTEXT           "智能火车站人脸识别自助通关系统",IDC_STATIC_TITLE,87,2,
+                    481,36,SS_CENTERIMAGE
+END
+
+IDD_CAMERA_DLGPIC DIALOGEX 0, 0, 1024, 768
+STYLE WS_POPUP | WS_VISIBLE
+EXSTYLE WS_EX_APPWINDOW
+FONT 9, "宋体"
+BEGIN
+    CONTROL         "",IDC_ST_CAM,"Static",SS_BITMAP,75,69,325,220
+    CONTROL         "",IDC_ST_IDCHECK,"Static",SS_BITMAP,471,79,52,50
+    CONTROL         "",IDC_ST_TICKETCHK,"Static",SS_BITMAP,466,211,59,48
+    CONTROL         "",IDC_ST_IDSHOW,"Static",SS_BITMAP,595,77,153,98
+    CONTROL         "",IDC_ST_TICKSHOW,"Static",SS_BITMAP,598,199,158,118
+    LTEXT           "static_left",IDC_ST_LEFT,135,523,180,62
+    LTEXT           "Static_right_title",IDC_ST_RIGHTTITLE,466,570,162,55
+    CONTROL         "static_left_TITLE",IDC_ST_LEFTTITLE,"Static",SS_SIMPLE | 
+                    WS_GROUP,96,451,146,19
+    PUSHBUTTON      "Test Exit",IDC_BTN_TEST,4,500,42,13,NOT WS_VISIBLE
+    LTEXT           "",IDC_ST_TIMESHOW,801,23,165,16
+END
+
+IDD_DIALOG_LOCKTEST DIALOG DISCARDABLE  0, 0, 295, 177
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "灯控板测试"
+FONT 10, "宋体"
+BEGIN
+    PUSHBUTTON      "开左闸",IDC_BUTTON_GATEON,20,30,50,14
+    PUSHBUTTON      "开右闸",IDC_BUTTON_GATEOFF,90,30,50,14
+    PUSHBUTTON      "1 灯开",IDC_BUTTON_LED1ON,20,52,50,14
+    PUSHBUTTON      "1 灯关",IDC_BUTTON_LED1OFF,90,51,50,14
+    PUSHBUTTON      "2 灯开",IDC_BUTTON_LED2ON,20,74,50,14
+    PUSHBUTTON      "2 灯关",IDC_BUTTON_LED2OFF,90,73,50,14
+    PUSHBUTTON      "3 灯开",IDC_BUTTON_LED3ON,20,96,50,14
+    PUSHBUTTON      "3 灯关",IDC_BUTTON_LED3OFF,90,96,50,14
+    PUSHBUTTON      "4 灯开",IDC_BUTTON_LED4ON,20,122,50,14
+    PUSHBUTTON      "4 灯关",IDC_BUTTON_LED4OFF,90,122,50,14
+    PUSHBUTTON      "5 灯开",IDC_BUTTON_LED5ON,20,145,50,14
+    PUSHBUTTON      "5 灯关",IDC_BUTTON_LED5OFF,90,144,50,14
+    LTEXT           "串口：",IDC_STATIC,15,8,25,8,NOT WS_VISIBLE
+    PUSHBUTTON      "打开",IDC_BUTTON2,102,7,31,12,NOT WS_VISIBLE
+    EDITTEXT        IDC_EDIT1,45,7,53,13,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_INFO,146,7,142,163,ES_MULTILINE | 
+                    ES_AUTOHSCROLL
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080404B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "camera Microsoft 基础类应用程序\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "camera\0"
+            VALUE "LegalCopyright", "版权所有 (C) 2015\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "camera.EXE\0"
+            VALUE "ProductName", "camera 应用程序\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_CAMERA_DIALOG, DIALOG
+    BEGIN
+        VERTGUIDE, 505
+    END
+
+    IDD_CAMERA_DLGPIC, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 1013
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 764
+    END
+
+    IDD_DIALOG_LOCKTEST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 288
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 170
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BITMAP2             BITMAP  DISCARDABLE     "res\\back4.bmp"
+IDB_BMP_PERSON          BITMAP  DISCARDABLE     "res\\pic.bmp"
+IDB_BMP_BG              BITMAP  DISCARDABLE     "res\\bg.bmp"
+IDB_BMP_TICKET          BITMAP  DISCARDABLE     "res\\picTick.bmp"
+IDB_BMP_WRONG           BITMAP  DISCARDABLE     "res\\picWrong.bmp"
+IDB_BMP_IDCARD          BITMAP  DISCARDABLE     "res\\picIDCard.bmp"
+IDB_BMP_RIGHT           BITMAP  DISCARDABLE     "res\\picRight.bmp"
+IDB_BMP_IDBACK          BITMAP  DISCARDABLE     "res\\IDBack.bmp"
+#endif    // Chinese (P.R.C.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE 4, 2
+#pragma code_page(936)
+#endif //_WIN32
+#include "res\camera.rc2"  // non-Microsoft Visual C++ edited resources
+#include "l.chs\afxres.rc"          // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
