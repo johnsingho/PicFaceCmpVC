@@ -9,7 +9,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "Compare.h"
+#include "HeCompare.h"
 #include <vector>
 
 class CJobManager;

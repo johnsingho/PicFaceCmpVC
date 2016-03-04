@@ -23,6 +23,39 @@ CString MakeModuleFileName( const TCHAR* pstrFileName, HMODULE hModule/*=NULL*/ 
     return strPath;
 }
 
+BOOL DeleteDir(const TCHAR* pszFolder)
+{
+    TCHAR szFindFileTemplate[MAX_PATH];
+    _tcscpy(szFindFileTemplate, pszFolder);
+    int nLen = _tcslen(szFindFileTemplate);
+    if(nLen>0)
+    {
+        if(szFindFileTemplate[nLen-1]!=_T('\\'))
+        {
+            _tcscat(szFindFileTemplate, _T("\\"));
+        }
+    }
+    _tcscat(szFindFileTemplate, _T("*"));
+    
+    WIN32_FIND_DATA FindData;
+    HANDLE hFindFile = FindFirstFile(szFindFileTemplate, &FindData);
+    if (hFindFile != INVALID_HANDLE_VALUE)
+    {
+        BOOL bMore = TRUE;
+        while (bMore)
+        {
+            TCHAR szFileName[MAX_PATH];            
+            if( !(FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+            {
+                _makepath(szFileName, NULL, pszFolder, FindData.cFileName, NULL);
+                DeleteFile(szFileName);
+            }
+            bMore = FindNextFile(hFindFile, &FindData);
+        }
+        FindClose(hFindFile);
+    }
+    return RemoveDirectory(pszFolder);
+}
 
 void logfile(const char* pstrFileName, const char* data)
 {
@@ -102,4 +135,29 @@ CBitmap* IplImage2CBitmap(CWnd* pwnd, const IplImage *pImage)
         return NULL;
 }
 
+
+
+void ResizeImg( IplImage* pImgSrc, IplImage* pImgDst)
+{
+    // 读取图片的宽和高;
+    //     int w = pImgSrc->width;
+    //     int h = pImgSrc->height;    
+    // 对图片 img 进行缩放，并存入到 SrcImage 中;
+    cvResize( pImgSrc, pImgDst);
+
+    // 重置 SrcImage 的 ROI 准备读入下一幅图片;
+    cvResetImageROI( pImgDst );
+}
+
+void GetGrayPixel(IplImage* pImgPic, int nWidth, int nHeight, unsigned char* pOutPixel)
+{    
+    IplImage* pImgOper = cvCreateImage(cvSize(nWidth, nHeight), IPL_DEPTH_8U, 3);
+    IplImage* pImgGray = cvCreateImage(cvSize(nWidth, nHeight), IPL_DEPTH_8U, 1);
+    ResizeImg(pImgPic, pImgOper);
+    cvCvtColor(pImgOper, pImgGray, CV_RGB2GRAY);
+    cvReleaseImage(&pImgOper);
+    
+    memcpy(pOutPixel, pImgGray->imageData, pImgGray->imageSize);
+    cvReleaseImage(&pImgGray);
+}
 

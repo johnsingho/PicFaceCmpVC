@@ -10,6 +10,12 @@
 #include "Compare.h"
 #include "comm/misc.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
 //例子样本
 // #define EXAMPLE_FILE1 "\\Img-1-1.bin"//"1.bin";
 // #define EXAMPLE_FILE2 "\\Img-1-2.bin"//"1.bin";
@@ -19,45 +25,24 @@
 //#define STR_DLL "D:\\Proc\\HwCompare.dll"
 //#define STR_PATH "D:\\Proc"
 
+
 //dll库所在位置和路径
 #define STR_DLL "HWcompare.dll"
 char   CurrentPath[MAX_PATH];   
 
 
-typedef HWRESULT (*tagHWInitialD)( char *strName);
-typedef HWRESULT (*tagHWReleaseD)();
-typedef HWRESULT (*tagHWInitial)( HW_HANDLE *pHandle, char *strName);
-typedef HWRESULT (*tagHWRelease)( HW_HANDLE *pHandle);
-typedef HWRESULT (*tagHWDetectFaceKeyPoints)( HW_HANDLE Handle,
-                            const unsigned char*pImg, 
-                            int nImgWidth, int nImgHeight,
-                            int* pnMaxFace, 
-                            HWFaceInfo *pFaceInfo);
+tagHWInitialD             pfnHWInitialD                 = NULL;
+tagHWReleaseD             pfnHWReleaseD                 = NULL;
+tagHWInitial              pfnHWInitial                  = NULL;
+tagHWRelease              pfnHWRelease                  = NULL;
+tagHWDetectFaceKeyPoints  pfnHWDetectFaceKeyPoints      = NULL;
+tagHWGetFeatureSize       pfnHWGetFeatureSize           = NULL;
+tagHWExtractFeature       pfnHWExtractFeature           = NULL;
+tagHWCompareFeature       pfnHWCompareFeature           = NULL;
+tagHWSetPortrait          pfnHWSetPortrait              = NULL;
 
-typedef HWRESULT (*tagHWGetFeatureSize)( HW_HANDLE Handle, int *piFtrSize );
-typedef HWRESULT (*tagHWExtractFeature)( HW_HANDLE Handle,
-                          const unsigned char* pImg, int nImgWidth, int nImgHeight,
-                          HWFaceInfo *pFaceInfo,
-             						  unsigned char *pOutFeature);
-typedef HWRESULT  (*tagHWCompareFeature)( HW_HANDLE Handle,
-                            const unsigned char *pFeaA,
-                            const unsigned char *pFeaB,
-                            float *fScore);
-typedef HWRESULT (*tagHWSetPortrait)( HW_HANDLE Handle, int iPortrait);
-
-
-tagHWInitialD             MyInitD       = NULL;
-tagHWReleaseD             MyReleaseD    = NULL;
-tagHWInitial              MyInitH       = NULL;
-tagHWRelease              MyReleaseH    = NULL;
-tagHWDetectFaceKeyPoints  MyDetect      = NULL;
-tagHWGetFeatureSize       MyGetFtrSize  = NULL;
-tagHWExtractFeature       MyGetFtr      = NULL;
-tagHWCompareFeature       MyCompare     = NULL;
-tagHWSetPortrait          MySetPortrait = NULL;
-
-HMODULE MyLib = NULL;
-HW_HANDLE MyHandle = NULL;
+HMODULE     g_hLib = NULL;
+HW_HANDLE   g_handle = NULL;
 
 //int   InitEngine();
 //void  TestCompare1V1( HW_HANDLE MyHandle);
@@ -72,7 +57,7 @@ const float TH_RESHOLD = 0.6f; //身份证比对阈值
                           
 
 
-int    initialCompare()
+int    InitialCompare()
 {
 	int ret =-1;
     //识别核心初始化
@@ -85,7 +70,7 @@ int    initialCompare()
         return ret;
     }
     //初始化一个Handle. 不同的线程可以初始化各自的Handle使用。
-    if( S_OK != MyInitH( &MyHandle, CurrentPath))
+    if( S_OK != pfnHWInitial( &g_handle, CurrentPath))
     {
 //        printf("Init Handle Failed\n");
         return ret;
@@ -103,32 +88,32 @@ int    initialCompare()
 //识别核心初始化
  int     InitEngine()
 {
-    MyLib  = LoadLibrary( STR_DLL);
-    if( MyLib == NULL )
+    g_hLib  = LoadLibrary( STR_DLL);
+    if( g_hLib == NULL )
     {
         //printf("\nLoad Lib Failed");
         return S_FAIL;
     }
-    MyInitD       = (tagHWInitialD)GetProcAddress( MyLib, "HWInitialD");
-    MyReleaseD    = (tagHWReleaseD )GetProcAddress( MyLib, "HWReleaseD");
-    MyInitH       = (tagHWInitial)GetProcAddress( MyLib, "HWInitial");
-    MyReleaseH    = (tagHWRelease)GetProcAddress( MyLib, "HWRelease");
-    MyDetect      = (tagHWDetectFaceKeyPoints)GetProcAddress( MyLib, "HWDetectFaceKeyPoints");
-    MyGetFtrSize  = (tagHWGetFeatureSize)GetProcAddress( MyLib, "HWGetFeatureSize");
-    MyGetFtr      = (tagHWExtractFeature)GetProcAddress( MyLib, "HWExtractFeature");
-    MyCompare     = (tagHWCompareFeature)GetProcAddress( MyLib, "HWCompareFeature");
-    MySetPortrait = (tagHWSetPortrait)GetProcAddress( MyLib, "HWSetPortrait");
+    pfnHWInitialD       = (tagHWInitialD)GetProcAddress( g_hLib, "HWInitialD");
+    pfnHWReleaseD    = (tagHWReleaseD )GetProcAddress( g_hLib, "HWReleaseD");
+    pfnHWInitial       = (tagHWInitial)GetProcAddress( g_hLib, "HWInitial");
+    pfnHWRelease    = (tagHWRelease)GetProcAddress( g_hLib, "HWRelease");
+    pfnHWDetectFaceKeyPoints      = (tagHWDetectFaceKeyPoints)GetProcAddress( g_hLib, "HWDetectFaceKeyPoints");
+    pfnHWGetFeatureSize  = (tagHWGetFeatureSize)GetProcAddress( g_hLib, "HWGetFeatureSize");
+    pfnHWExtractFeature      = (tagHWExtractFeature)GetProcAddress( g_hLib, "HWExtractFeature");
+    pfnHWCompareFeature     = (tagHWCompareFeature)GetProcAddress( g_hLib, "HWCompareFeature");
+    pfnHWSetPortrait = (tagHWSetPortrait)GetProcAddress( g_hLib, "HWSetPortrait");
 
-    if( MyInitD == NULL || MyReleaseD == NULL ||
-        MyInitH == NULL || MyReleaseH == NULL ||
-        MyDetect == NULL || MySetPortrait == NULL ||
-        MyGetFtrSize == NULL ||
-        MyGetFtr == NULL || MyCompare == NULL )
+    if( pfnHWInitialD == NULL || pfnHWReleaseD == NULL ||
+        pfnHWInitial == NULL || pfnHWRelease == NULL ||
+        pfnHWDetectFaceKeyPoints == NULL || pfnHWSetPortrait == NULL ||
+        pfnHWGetFeatureSize == NULL ||
+        pfnHWExtractFeature == NULL || pfnHWCompareFeature == NULL )
     {
         //printf("\nFind Proc Address Failed");
         return S_FAIL;
     }
-    if( S_OK != MyInitD(CurrentPath))
+    if( S_OK != pfnHWInitialD(CurrentPath))
     {
         //printf("\nInit Failed");
         return S_FAIL;
@@ -139,13 +124,13 @@ int    initialCompare()
 //释放识别核心。
 void ReleaseEngine()
 {
-    if( MyReleaseD != NULL )
+    if( pfnHWReleaseD != NULL )
     {
-        MyReleaseD();
+        pfnHWReleaseD();
     }
-    if( MyLib != NULL )
+    if( g_hLib != NULL )
     {
-        FreeLibrary( MyLib);
+        FreeLibrary( g_hLib);
     }
 }
 
@@ -157,14 +142,14 @@ int GetFeature( HW_HANDLE Handle, const unsigned char *pb,
     HWFaceInfo MyInfo;
     int iMaxFace = 1;
 
-    iRst = MyDetect( Handle, pb, iW, iH, &iMaxFace, &MyInfo );
+    iRst = pfnHWDetectFaceKeyPoints( Handle, pb, iW, iH, &iMaxFace, &MyInfo );
     //MyDetect进行人脸定位，返回的MyInfo包含人脸定位的信息，
     //MyInfo.m_FaceRect 给出的人脸框矩形坐标，应用程序可依照这个信息在屏上画出相应小框。
     //显示人脸定位的结果。
     if( iRst == S_OK && iMaxFace > 0)
     {
         //根据定位信息求出人脸特征。
-        if( S_OK == MyGetFtr( Handle, pb, iW, iH, &MyInfo, pbFtr))
+        if( S_OK == pfnHWExtractFeature( Handle, pb, iW, iH, &MyInfo, pbFtr))
         {
             OutputDebugString("***HWExtractFeature ok\n"); //! temp for debug
             return S_OK;
@@ -264,12 +249,12 @@ float  TestCompare1V1( HW_HANDLE MyHandle, PICPIXEL* pIDPic, PICPIXEL* pLivePic,
     unsigned char *pbFtr1 = NULL, *pbFtr2 = NULL;    
     float fScore=fInitFaceCmpRate;
     
-    MyGetFtrSize( MyHandle, &iFtrSize);
+    pfnHWGetFeatureSize( MyHandle, &iFtrSize);
     pbFtr1 = new unsigned char[ iFtrSize];
     pbFtr2 = new unsigned char[ iFtrSize];
 
   	//如果确定是证件照，可以设Portrait= 1， 否则设Portrait = 0
-  	MySetPortrait( MyHandle, bPortrait);
+  	pfnHWSetPortrait( MyHandle, bPortrait);
   	
     if( S_OK != GetFeature( MyHandle, pIDPic->pixel, pIDPic->width, pIDPic->height, pbFtr1))
     {
@@ -284,12 +269,7 @@ float  TestCompare1V1( HW_HANDLE MyHandle, PICPIXEL* pIDPic, PICPIXEL* pLivePic,
     }
     
     OutputDebugString("***HWExtractFeature all ok\n"); //! temp for debug
-    MyCompare( MyHandle, pbFtr1, pbFtr2, &fScore);
-//     printf("\nCompare Score = %f", fScore);
-//     if( fScore > TH_RESHOLD )
-//     {
-//         printf("\nMaybe Same Person");
-//     }
+    pfnHWCompareFeature( MyHandle, pbFtr1, pbFtr2, &fScore);
 
 CleanUp:
     if( pbFtr1 != NULL )
@@ -390,4 +370,6 @@ void DeletePicPixel( PICPIXEL* pPicPixel)
         delete pPicPixel;
     }
 }
+
+
 

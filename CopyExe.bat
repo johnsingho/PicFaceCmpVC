@@ -2,5 +2,5 @@
 
 set tardir=z:\
 
-copy cameraTest.exe %tardir%
+copy cameraTest3.exe %tardir%
 

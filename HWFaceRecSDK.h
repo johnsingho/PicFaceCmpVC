@@ -52,6 +52,7 @@ typedef struct tagKeyPos
 	Pos rightMouth;
 }KeyPos;
 #endif
+
 #ifndef HW_FACE_INFO
 #define HW_FACE_INFO
 typedef struct tagHWFaceInfo{
@@ -134,7 +135,7 @@ HWRESULT HWGetFeatureSize( HW_HANDLE Handle, int *piFtrSize );
 HWRESULT HWExtractFeature( HW_HANDLE Handle,
                           const unsigned char* pImg, int nImgWidth, int nImgHeight,
                           HWFaceInfo *pFaceInfo,
-						              unsigned char *pOutFeature);
+						  unsigned char *pOutFeature);
 
 
 //用于单独比较两张图片的特征串相似性。

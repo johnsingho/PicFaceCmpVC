@@ -79,8 +79,12 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 cxcore.lib cv.lib cvaux.lib highgui.lib cvcam.lib ml.lib winmm.lib /nologo /subsystem:windows /debug /machine:I386 /out:"cameraTest.exe" /pdbtype:sept /libpath:"DirectShow/Lib" /libpath:"zbar/lib" /libpath:"opencv/lib"
+# ADD LINK32 cxcore.lib cv.lib cvaux.lib highgui.lib cvcam.lib ml.lib winmm.lib /nologo /subsystem:windows /debug /machine:I386 /out:"cameraTest3.exe" /pdbtype:sept /libpath:"DirectShow/Lib" /libpath:"zbar/lib" /libpath:"opencv/lib"
 # SUBTRACT LINK32 /pdb:none
+# Begin Special Build Tool
+SOURCE="$(InputPath)"
+PostBuild_Cmds=copyexe.bat
+# End Special Build Tool
 
 !ENDIF 
 
@@ -114,6 +118,10 @@ SOURCE=.\Compare.cpp
 # Begin Source File
 
 SOURCE=.\DialogLockTest.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\HeCompare.cpp
 # End Source File
 # Begin Source File
 
@@ -151,6 +159,10 @@ SOURCE=.\Compare.h
 # Begin Source File
 
 SOURCE=.\DialogLockTest.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\HeCompare.h
 # End Source File
 # Begin Source File
 

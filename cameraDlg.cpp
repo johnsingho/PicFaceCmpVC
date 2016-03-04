@@ -20,7 +20,7 @@ static char THIS_FILE[] = __FILE__;
 // 默认配置文件
 #define DEF_CONFIG_FILE     "profile.ini"
 // 默认身份证照片目录(程序目录下)
-#define DEF_IDPIC_DIR       "pic"
+#define DEF_IDPIC_DIR       "mod"
 // 工作轮询间隔(ms)
 #define DEF_WAIT_POLLING    (0.2*1000)
 // 人脸摄像头轮询间隔(ms)
@@ -37,11 +37,10 @@ static char THIS_FILE[] = __FILE__;
 // 用于2016-01-29新SDK测试的初始识别率(0~999)
 #define DEF_INIT_FACECMP_RATE   (322)
 
-#define IMAGE_CHANNELS          (3)
 
 // from Compare.cpp
 //extern PICPIXEL picPixel[2];
-extern HW_HANDLE MyHandle;
+extern HW_HANDLE g_handle;
 
 using namespace zbar;
 #pragma comment(lib, "libzbar-0.lib")
@@ -93,9 +92,7 @@ CCameraDlg::CCameraDlg(CWnd* pParent /*=NULL*/)
     m_playSoundThread.pSoundThread=NULL;
     m_playSoundThread.nState=0;
     //m_playSoundThread.csSound;
-
-    m_pIDPhoto=NULL;
-    m_pLivePic=NULL;    
+    
 }
 
 void CCameraDlg::DoDataExchange(CDataExchange* pDX)
@@ -501,9 +498,6 @@ void CCameraDlg::SetUI()
 // 初始化内部变量
 void CCameraDlg::InitVars()
 {
-    m_pIDPhoto = CreatePicPixel(PHOTO_WIDTH, PHOTO_HEIGHT);
-    m_pLivePic = CreatePicPixel(IMAGE_WIDTH, IMAGE_HEIGHT);
-    
     SwitchCamera(true);
     m_gateBoardOper.Bind(&m_gateBoard);
 }
@@ -607,7 +601,7 @@ bool CCameraDlg::InitIDCardReader( int nPort)
 //初始化人脸识别库
 bool CCameraDlg::TryInitFaceCmp()
 {
-    int nRet = initialCompare();
+    int nRet = InitialCompare();
     if(S_OK!=nRet)
     {
         const char* pstrErr = "人脸识别模块初始化失败！";
@@ -725,7 +719,11 @@ void CCameraDlg::DoExit()
     m_workThreads.bMainCanExit=true;
     m_workThreads.bCamPicCanExit=true;
 
-    m_gateBoard.SerialClose();        
+    m_gateBoard.SerialClose();
+
+    //清空临时目录
+    CString strPicDir = MakeModuleFilePath(DEF_IDPIC_DIR);
+    DeleteDir(strPicDir);
 
     CWinThread* pThread = m_workThreads.pMainThread;
     DWORD dwState=0;
@@ -768,11 +766,6 @@ void CCameraDlg::DoExit()
     
     memset(&m_workThreads, 0, sizeof(m_workThreads));
     KillTimer(1);
-
-    DeletePicPixel(m_pIDPhoto);
-    m_pIDPhoto=NULL;
-    DeletePicPixel(m_pLivePic);
-    m_pLivePic=NULL;
 }
 
 static void ImageThreshold(IplImage* img, CvHaarClassifierCascade* cascade, CvMemStorage* storage)
@@ -888,15 +881,7 @@ static void ImageThreshold(IplImage* img, CvHaarClassifierCascade* cascade, CvMe
 // H.Z.XIN 2016/01/13 使用MindVision3.0M工业摄像头来拍人
 // 定时刷新摄像头画面
 UINT CCameraDlg::ShowCamPicThread(void *param)
-{
-    const char* cascade_name = "haarcascade_frontalface_alt2.xml";
-    CvMemStorage* storage = NULL;
-    CvHaarClassifierCascade* cascade = NULL;
-    
-    CString strCascFile = MakeModuleFilePath(cascade_name);
-    cascade = (CvHaarClassifierCascade*)cvLoad( strCascFile, 0, 0, 0 );
-    storage = cvCreateMemStorage(0);
-    
+{    
     CCameraDlg* pDlg = (CCameraDlg*)param;
     CWnd* pWnd = pDlg->GetCtrlCamPic();
     pWnd->ShowWindow(SW_SHOW);
@@ -928,15 +913,20 @@ UINT CCameraDlg::ShowCamPicThread(void *param)
             pDlg->UnLockCam();
             Sleep(DEF_WAIT_FACE*2);
             continue;
-        }        
+        }
+
         if(bFaceOrTicket)
         {
             cvFlip(pFrame, NULL, 0);
-            cvFlip(pFrame, NULL, 1);
+            cvFlip(pFrame, NULL, 1);            
             //增加人脸识别图框            
-            ImageThreshold(pFrame, cascade, storage);
+            //ImageThreshold(pFrame, cascade, storage);
+            pDlg->DetectFace(pFrame);
+            pImg = pDlg->SaveFramePic(pFrame);
+        }else{
+            pImg = pDlg->SaveFramePic(pFrame);
         }
-        pImg = pDlg->SaveFramePic(pFrame);
+
         pDlg->UnLockCam();
         //右边显示窗口，显示处理后的图像
         //imgRight.CopyOf(pFrame);
@@ -947,8 +937,6 @@ UINT CCameraDlg::ShowCamPicThread(void *param)
         Sleep(DEF_WAIT_FACE);
     }	
     
-    cvReleaseHaarClassifierCascade(&cascade);
-    cvReleaseMemStorage(&storage);
     return 0 ;
 }
 
@@ -1045,20 +1033,6 @@ bool CCameraDlg::WritePhotoFile( const char* pstrID, unsigned char* pbyPhoto )
     return bOk;
 }
 
-
-static void ResizeImg( IplImage* pImgSrc, IplImage* pImgDst)
-{
-    // 读取图片的宽和高;
-//     int w = pImgSrc->width;
-//     int h = pImgSrc->height;    
-    // 对图片 img 进行缩放，并存入到 SrcImage 中;
-    cvResize( pImgSrc, pImgDst);
-    
-    // 重置 SrcImage 的 ROI 准备读入下一幅图片;
-    cvResetImageROI( pImgDst );
-}
-
-
 // static void PaintImg( IplImage* img, CWnd* pWnd)
 // {
 //     CDC* pDC = pWnd->GetDC();        // 获得显示控件的 DC;
@@ -1134,25 +1108,12 @@ static void ResizeImg( IplImage* pImgSrc, IplImage* pImgDst)
 // }
 
 
-static void GetGrayPixel(IplImage* pImgPic, int nWidth, int nHeight, unsigned char* pOutPixel)
-{    
-    IplImage* pImgOper = cvCreateImage(cvSize(nWidth, nHeight), IPL_DEPTH_8U, IMAGE_CHANNELS);
-    IplImage* pImgGray = cvCreateImage(cvSize(nWidth, nHeight), IPL_DEPTH_8U, 1);
-    ResizeImg(pImgPic, pImgOper);
-    cvCvtColor(pImgOper, pImgGray, CV_RGB2GRAY);
-    cvReleaseImage(&pImgOper);
-
-    memcpy(pOutPixel, pImgGray->imageData, pImgGray->imageSize);
-    cvReleaseImage(&pImgGray);
-}
-
-
 // 展示身份证信息, 并且保存身份证照片数据
 //
 void CCameraDlg::ShowIDCardInfo( CIDBaseTextDecoder* pidDecoder)
 {
     int ret=-1;    
-    IplImage* pImgPic = cvCreateImage( cvSize(PHOTO_WIDTH, PHOTO_HEIGHT), IPL_DEPTH_8U, IMAGE_CHANNELS ); //创建图像模板;
+    IplImage* pImgPic = cvCreateImage( cvSize(PHOTO_WIDTH, PHOTO_HEIGHT), IPL_DEPTH_8U, 3); //创建图像模板;
     IplImage* ipl = cvLoadImage(m_strLastIDPicPath); // 读取图片、缓存到一个局部变量ipl中;  
     if( !ipl )                      // 判断是否成功载入图片;
     {
@@ -1169,9 +1130,7 @@ void CCameraDlg::ShowIDCardInfo( CIDBaseTextDecoder* pidDecoder)
     m_stIDShow.SetIDPhoto(pImgPic);
     m_stIDShow.RedrawWindow();
     
-    //picPixel[0].width=PHOTO_WIDTH;    
-    //picPixel[0].height=PHOTO_HEIGHT;
-    GetGrayPixel(pImgPic, m_pIDPhoto->width, m_pIDPhoto->height, &m_pIDPhoto->pixel[0]);
+    m_faceDetector.StoreIDPhoto(pImgPic);    
 
     /////////////////////////////////////////////////
     //转换一个矩形区域0的RGB图至灰度图片.存入grayPixel,转换公式:Gray = R*0.299 + G*0.587 + B*0.114,直接省去小数部分
@@ -1248,11 +1207,14 @@ void CHandlerFaceCmp::Do( void* pData)
 
     pDlg->SwitchLight(2, false);
     pDlg->SwitchLight(3, false);
+
+    pDlg->KeepCompareInfo();
+
     if(bCmp)
     {
         pDlg->UpdateIconCheck(0, 1);
         pDlg->UpdatePromptInfo("人脸识别通过！");        
-        Sleep(0.2*1000); //! for test
+        Sleep(0.1*1000); //! for test
         GetMgr()->disPatch(&g_handlerTicketCheck, pData);
     }else{
         pDlg->UpdateIconCheck(0, 0);
@@ -1284,27 +1246,17 @@ void CHandlerFaceCmp::WriteFaceCmpLog( void* pData, float fScore)
 }
 
 bool CCameraDlg::DoFaceCmp( float* pfScore/*=NULL*/)
-{
-    //转换一个矩形区域1的RGB图至灰度图片.存入grayPixel,
-    //转换公式:Gray = R*0.299 + G*0.587 + B*0.114,直接省去小数部分    
-//     picPixel[1].width=IMAGE_WIDTH;
-//     picPixel[1].height=IMAGE_HEIGHT;
-//     CRect rect;
-//     m_stCam.GetWindowRect(&rect);
-//     GetPixelToGray(rect.left,rect.top,picPixel[1].width,picPixel[1].height,&picPixel[1].pixel[0]);
-
-    //picPixel[1].width=IMAGE_WIDTH;    
-    //picPixel[1].height=IMAGE_HEIGHT;    
-    LockCam();
-    GetGrayPixel(m_swCamerPic.m_curFrameImg.GetImage(), m_pLivePic->width, m_pLivePic->height, &m_pLivePic->pixel[0]);
-    UnLockCam();
+{ 
+//     LockCam();
+//     GetGrayPixel(m_swCamerPic.m_curFrameImg.GetImage(), m_pLivePic->width, m_pLivePic->height, &m_pLivePic->pixel[0]);
+//     UnLockCam();
 
     float fScore=0.0;
     //两个图片的比对。 并且保存特征.
-    if(MyHandle!=NULL)
+    if(g_handle!=NULL)
     {
-        //! temp for test
-        fScore=TestCompare1V1(MyHandle, m_pIDPhoto, m_pLivePic, m_cfgInfo.fInitFaceCmpRate, 1);
+        //fScore=m_faceDetector.CompareAFace(m_cfgInfo.fInitFaceCmpRate, 1);        
+        fScore=m_faceDetector.CompareAFace(m_cfgInfo.fInitFaceCmpRate, 0);
     }
     fScore=fScore*100.0;
     CString strScore;
@@ -1566,4 +1518,25 @@ void CCameraDlg::OnRButtonDown(UINT nFlags, CPoint point)
     SetCursorPos(120,120);
     ShowCursor(TRUE);
 	CDialog::OnRButtonDown(nFlags, point);
+}
+
+void CCameraDlg::DetectFace( IplImage* pFrame )
+{
+    m_faceDetector.StoreFacePhoto(pFrame);
+    m_faceDetector.DrawFaceRect(pFrame);
+}
+
+
+// 保存身份证照片和现场照片，留底
+//
+void CCameraDlg::KeepCompareInfo()
+{
+    m_strLastIDPicPath; //id picture
+    
+    CString strFileName;
+    strFileName.Format("%s\\%s", DEF_IDPIC_DIR, "22.jpg");
+    strFileName = MakeModuleFilePath(strFileName);
+    
+    CvvImage* pImg = m_faceDetector.GetCurLivePic(); //live pic
+    pImg->Save(strFileName);    
 }

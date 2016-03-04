@@ -15,7 +15,9 @@ inline CString MakeModuleFilePath(const char* pstrFile)
 
 void logfile(const char* pstrFileName, const char* data);
 CBitmap* IplImage2CBitmap(CWnd* pwnd, const IplImage *pImage);
-
+void ResizeImg( IplImage* pImgSrc, IplImage* pImgDst);
+void GetGrayPixel(IplImage* pImgPic, int nWidth, int nHeight, unsigned char* pOutPixel);
+BOOL DeleteDir(const TCHAR* pszFolder);
 
 
 

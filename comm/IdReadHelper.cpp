@@ -21,32 +21,32 @@ unsigned char SumCheck(unsigned char * bData, int nLen)
 
 static void ReadHook(void* handle,unsigned char* data,int datalen)
 {
-#ifdef _DEBUG
-    char szBuf[128]={0};
-	sprintf(szBuf, "Serial Read,handle=%d\n", handle);
-    OutputDebugString(szBuf);
-	for(int i = 0; i < datalen; i++)
-	{
-		sprintf(szBuf, "%02x ", data[i]);
-        OutputDebugString(szBuf);
-	}
-	OutputDebugString("\n");
-#endif
+// #ifdef _DEBUG
+//     char szBuf[128]={0};
+// 	sprintf(szBuf, "Serial Read,handle=%d\n", handle);
+//     OutputDebugString(szBuf);
+// 	for(int i = 0; i < datalen; i++)
+// 	{
+// 		sprintf(szBuf, "%02x ", data[i]);
+//         OutputDebugString(szBuf);
+// 	}
+// 	OutputDebugString("\n");
+// #endif
 }
 
 static void WriteHook(void* handle,unsigned char* data,int datalen)
 {
-#ifdef _DEBUG
-    char szBuf[128]={0};
-	sprintf(szBuf, "Serial Write,handle=%d\n", handle);
-    OutputDebugString(szBuf);
-	for(int i = 0; i < datalen; i++)
-	{
-		sprintf(szBuf, "%02x ", data[i]);
-        OutputDebugString(szBuf);
-	}
-	OutputDebugString("\n");
-#endif
+// #ifdef _DEBUG
+//     char szBuf[128]={0};
+// 	sprintf(szBuf, "Serial Write,handle=%d\n", handle);
+//     OutputDebugString(szBuf);
+// 	for(int i = 0; i < datalen; i++)
+// 	{
+// 		sprintf(szBuf, "%02x ", data[i]);
+//         OutputDebugString(szBuf);
+// 	}
+// 	OutputDebugString("\n");
+// #endif
 }
 
 

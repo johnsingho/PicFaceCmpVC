@@ -117,6 +117,7 @@ public:
     void FaceCamPlay( bool bPlay );
     bool ValidTicket( CString strQrCode );
     inline CIDBaseTextDecoder* GetIDCardInfo(){return &m_idTextDecoder;}
+    void KeepCompareInfo();
 private:
     void LoadConfigInfo();
     void SaveConfigInfo();
@@ -142,6 +143,7 @@ private:
         return m_swCamerPic.pCurCamera;
     }
     void UpdateShowTime();
+    void DetectFace( IplImage* pFrame);    
     
 private:
     CBitmap m_bmpBg;
@@ -194,9 +196,7 @@ private:
 
     SWLock03       m_gateBoard; //灯板，闸门控制
     CGateBoardOper m_gateBoardOper;
-
-    PICPIXEL*      m_pIDPhoto; /*身份证照片数据*/
-    PICPIXEL*      m_pLivePic; /*现场照片数据*/
+    CFaceDetect    m_faceDetector; //使用人脸识别库
 };
 
 ///////////////////////////////////////////////////
