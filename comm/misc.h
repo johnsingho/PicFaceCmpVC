@@ -12,6 +12,7 @@ inline CString MakeModuleFilePath(const char* pstrFile)
     return MakeModuleFileName(pstrFile, GetModuleHandle(NULL));
 }
 
+__int64 GetFileSizeByName(const char* fileName);
 
 void logfile(const char* pstrFileName, const char* data);
 CBitmap* IplImage2CBitmap(CWnd* pwnd, const IplImage *pImage);

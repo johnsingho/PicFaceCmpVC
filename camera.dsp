@@ -79,7 +79,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 cxcore.lib cv.lib cvaux.lib highgui.lib cvcam.lib ml.lib winmm.lib /nologo /subsystem:windows /debug /machine:I386 /out:"cameraTest3.exe" /pdbtype:sept /libpath:"DirectShow/Lib" /libpath:"zbar/lib" /libpath:"opencv/lib"
+# ADD LINK32 cxcore.lib cv.lib cvaux.lib highgui.lib cvcam.lib ml.lib winmm.lib sqlite3.lib /nologo /subsystem:windows /debug /machine:I386 /out:"cameraTest3.exe" /pdbtype:sept /libpath:"DirectShow/Lib" /libpath:"zbar/lib" /libpath:"opencv/lib" /libpath:"Sqlite"
 # SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
@@ -266,6 +266,14 @@ SOURCE=.\comm\IdReadHelper.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\comm\LogDb.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\comm\LogDb.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\comm\MindVisionCam.cpp
 # End Source File
 # Begin Source File
@@ -315,6 +323,14 @@ SOURCE=.\FaceExam.h
 # Begin Source File
 
 SOURCE=.\zbar\include\zbar.h
+# End Source File
+# End Group
+# Begin Group "Sqlite"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\Sqlite\sqlite3.h
 # End Source File
 # End Group
 # Begin Source File

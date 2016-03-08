@@ -51,7 +51,9 @@ void CFaceDetect::StoreIDPhoto( IplImage* pImgPic)
 
 void CFaceDetect::StoreFacePhoto( IplImage* pFrame)
 {
+    this->LockLivePic();
     m_livePic.CopyOf(pFrame);
+    this->UnLockLivePic();
     GetGrayPixel(m_livePic.GetImage(), m_pLivePic->width, m_pLivePic->height, &m_pLivePic->pixel[0]);
 }
 
@@ -162,6 +164,16 @@ float CFaceDetect::CompareAFace( double fInitFaceCmpRate, int iPorttrail )
     delete[] pbFtrID;
     delete[] pbFtrLiveFace;
     return fScore;
+}
+
+void CFaceDetect::LockLivePic()
+{
+    m_csLockLivePic.Lock();
+}
+
+void CFaceDetect::UnLockLivePic()
+{
+    m_csLockLivePic.Unlock();    
 }
 
 

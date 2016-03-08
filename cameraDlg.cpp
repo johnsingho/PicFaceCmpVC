@@ -75,6 +75,7 @@ CDialogLockTest *pDlgLockTest=NULL;
 #define SYSTEMLOG_FILENAME  "system.log"
 #define FACECMPLOG_FILENAME "FaceCmp.log"
 
+
 /////////////////////////////////////////////////////////////////////////////
 // CCameraDlg dialog
 
@@ -500,6 +501,7 @@ void CCameraDlg::InitVars()
 {
     SwitchCamera(true);
     m_gateBoardOper.Bind(&m_gateBoard);
+    m_strPathLogDB = MakeModuleFileName(DEF_LOG_DB_FILENAME);
 }
 
 // bFaceOrTicket
@@ -1531,12 +1533,25 @@ void CCameraDlg::DetectFace( IplImage* pFrame )
 //
 void CCameraDlg::KeepCompareInfo()
 {
-    m_strLastIDPicPath; //id picture
-    
+    if(!m_logDb.InitOpen(m_strPathLogDB))
+    {
+        TRACE("***KeepCompareInfo创建数据库失败！\n");
+        return;
+    }
+
     CString strFileName;
     strFileName.Format("%s\\%s", DEF_IDPIC_DIR, "22.jpg");
     strFileName = MakeModuleFilePath(strFileName);
     
+    m_faceDetector.LockLivePic();
     CvvImage* pImg = m_faceDetector.GetCurLivePic(); //live pic
-    pImg->Save(strFileName);    
+    bool bSave = pImg->Save(strFileName);
+    m_faceDetector.UnLockLivePic();
+    if(!bSave)
+    {   
+        TRACE("***KeepCompareInfo保存现场照片失败！\n");
+        return;
+    }
+
+    m_logDb.InsertRec(m_idTextDecoder.GetName(), m_idTextDecoder.GetID(), m_strLastIDPicPath, strFileName);
 }

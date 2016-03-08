@@ -57,6 +57,28 @@ BOOL DeleteDir(const TCHAR* pszFolder)
     return RemoveDirectory(pszFolder);
 }
 
+// 获取文件的大小
+// -1 文件不存在
+// -2 文件存在，但无法读取大小
+// 其它，实际文件的字节数
+__int64 GetFileSizeByName(const char*  fileName)
+{
+    HANDLE hFile = CreateFile(fileName, FILE_GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+    if (hFile  == INVALID_HANDLE_VALUE)
+    {
+        return -1;
+    }
+    
+    LARGE_INTEGER fileSize={0};    
+    if( !GetFileSizeEx(hFile, &fileSize))
+    {
+        CloseHandle(hFile);
+        return -2;
+    }
+    CloseHandle(hFile);
+    return (__int64)fileSize.QuadPart;
+}
+
 void logfile(const char* pstrFileName, const char* data)
 {
     size_t pos;
@@ -160,4 +182,49 @@ void GetGrayPixel(IplImage* pImgPic, int nWidth, int nHeight, unsigned char* pOu
     memcpy(pOutPixel, pImgGray->imageData, pImgGray->imageSize);
     cvReleaseImage(&pImgGray);
 }
+
+BOOL Ascii2Utf8(const char* pcszAscii, char* pszUtf8, int* pnUtf8Size)  
+{  
+    if (!pcszAscii || !pszUtf8 || !pnUtf8Size)  
+        return FALSE;  
+      
+    int nWCharCount = MultiByteToWideChar(CP_ACP, 0, pcszAscii, -1, NULL, 0);  
+    wchar_t* pwszStr = new wchar_t[nWCharCount];  
+    MultiByteToWideChar(CP_ACP, 0, pcszAscii, -1, pwszStr, nWCharCount);  
+          
+    int nUtf8Count = WideCharToMultiByte(CP_UTF8, 0, pwszStr, nWCharCount, NULL, 0, NULL, NULL);  
+    if (nUtf8Count > *pnUtf8Size)  
+    {  
+        *pnUtf8Size = nUtf8Count;  
+        return FALSE;  
+    }  
+      
+    WideCharToMultiByte(CP_UTF8, 0, pwszStr, nWCharCount, pszUtf8, nUtf8Count, NULL, NULL);  
+    delete[] pwszStr;  
+    *pnUtf8Size = nUtf8Count;  
+    return TRUE;  
+}  
+
+BOOL Utf82Ascii(const char* pcszUtf8, char* pszAscii, int* pnAsciiSize)  
+{  
+    if (!pcszUtf8 || !pszAscii || !pnAsciiSize)  
+        return FALSE;  
+      
+    int nWCharCount = MultiByteToWideChar(CP_UTF8, 0, pcszUtf8, -1, NULL, 0);  
+    wchar_t* pwszStr = new wchar_t[nWCharCount];  
+    MultiByteToWideChar(CP_UTF8, 0, pcszUtf8, -1, pwszStr, nWCharCount);  
+          
+    int nAsciiCount = WideCharToMultiByte(CP_ACP, 0, pwszStr, nWCharCount, NULL, 0, NULL, NULL);  
+    if (nAsciiCount > *pnAsciiSize)  
+    {  
+        *pnAsciiSize = nAsciiCount;  
+        return FALSE;  
+    }  
+      
+    WideCharToMultiByte(CP_ACP, 0, pwszStr, nWCharCount, pszAscii, nAsciiCount, NULL, NULL);  
+    delete[] pwszStr;  
+    *pnAsciiSize = nAsciiCount;  
+    return TRUE;  
+}
+
 

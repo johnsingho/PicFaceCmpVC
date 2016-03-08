@@ -22,7 +22,7 @@
 
 #include "comm/sw_lock03.h"
 #include "comm/MindVisionCam.h"
-
+#include "comm/LogDb.h"
 
 //配置文件信息
 struct stConfigInfo
@@ -197,6 +197,9 @@ private:
     SWLock03       m_gateBoard; //灯板，闸门控制
     CGateBoardOper m_gateBoardOper;
     CFaceDetect    m_faceDetector; //使用人脸识别库
+
+    CLogDb         m_logDb;        //使用sqlite来保存用户照片
+    CString        m_strPathLogDB; //日志数据库文件名
 };
 
 ///////////////////////////////////////////////////
