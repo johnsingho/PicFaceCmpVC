@@ -117,7 +117,7 @@ public:
     void FaceCamPlay( bool bPlay );
     bool ValidTicket( CString strQrCode );
     inline CIDBaseTextDecoder* GetIDCardInfo(){return &m_idTextDecoder;}
-    void KeepCompareInfo();
+    void KeepCompareInfo(float fCurScore);
 private:
     void LoadConfigInfo();
     void SaveConfigInfo();

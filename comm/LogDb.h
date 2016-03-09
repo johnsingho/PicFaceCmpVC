@@ -60,7 +60,7 @@ public:
     bool OpenDB( CString strFileName, CString strPass);
     bool CreateTable();
     bool ExistTable( const char* pstrTab );
-    bool InsertRec( const char* pstrName, const char* pstrID, const char* pstrLastIDPicPath, const char* pstrFileName );
+    bool InsertRec( const char* pstrName, const char* pstrID, float fCurScore, const char* pstrLastIDPicPath, const char* pstrFileName );
 private:    
     bool LoadBlobData( const char* pstrLastIDPicPath, const char* pstrFileName );
 private:

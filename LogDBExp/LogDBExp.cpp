@@ -33,7 +33,8 @@ static const char* MakeModuleFileName( const char* pstrFileName)
 
 
 bool ExtractData( const char* pstrDbFile );
-bool WriteOutFiles( const char* pstrIDNo, const char* pstrUpdateTime, int idPhotoLen, const void* pIDPhotoData, int livePhotoLen, const void* pLivePhotoData );
+bool WriteOutFiles( const char* pstrIDNo, const char* pstrUpdateTime, double fScore, 
+                   int idPhotoLen, const void* pIDPhotoData, int livePhotoLen, const void* pLivePhotoData);
 
 ////////////////////////////////////////////////////////////////
 
@@ -75,6 +76,7 @@ bool ExtractImgs( sqlite3* db )
 
     strcpy(g_strTarDir, MakeModuleFileName(DEF_EXTRACT_OUT_DIR));
     CreateDirectory(g_strTarDir, NULL);
+    int nExtract=0;
     while(SQLITE_ROW == sqlite3_step(statement))
     {
         const char* pstrName       = (const char*)sqlite3_column_text(statement, 0); 
@@ -90,8 +92,11 @@ bool ExtractImgs( sqlite3* db )
         double dblRecRate          = sqlite3_column_double(statement, 5);
         //printf("pstrUpdateTime=%s, idPhoto size=%d, livePhoto size=%d\n", 
         //        pstrUpdateTime, idPhotoLen, livePhotoLen);
-        WriteOutFiles(pstrIDNo, pstrUpdateTime, idPhotoLen, pIDPhotoData, livePhotoLen, pLivePhotoData);
+        bool bWrite = WriteOutFiles(pstrIDNo, pstrUpdateTime, dblRecRate,
+                                    idPhotoLen, pIDPhotoData, livePhotoLen, pLivePhotoData);
+        if(bWrite){ nExtract++;}
     }
+    printf("成功导出%d份数据！\n", nExtract);
     return true;
 }
 
@@ -122,7 +127,8 @@ ED_EXIT:
 }
 
 
-bool WriteOutFiles( const char* pstrIDNo, const char* pstrUpdateTime, int idPhotoLen, const void* pIDPhotoData, int livePhotoLen, const void* pLivePhotoData )
+bool WriteOutFiles( const char* pstrIDNo, const char* pstrUpdateTime, double fScore,
+                    int idPhotoLen, const void* pIDPhotoData, int livePhotoLen, const void* pLivePhotoData )
 {
     char szNameBuf[1024];
     char* pstrFileName =szNameBuf;
@@ -136,7 +142,7 @@ bool WriteOutFiles( const char* pstrIDNo, const char* pstrUpdateTime, int idPhot
     //2016-03-08 11:24:11
     sscanf(pstrUpdateTime, "%d-%d-%d %d:%d:%d", &nYear, &nMon, &nDay, &nHour, &nMin, &nSec);
     sprintf(szTime, "%04d%02d%02d%02d%02d%02d", nYear, nMon, nDay, nHour, nMin, nSec);
-    int iPos = sprintf(szNameBuf, "%s\\%s_%s", g_strTarDir, pstrIDNo, szTime);
+    int iPos = sprintf(szNameBuf, "%s\\%s_%s_%02d", g_strTarDir, pstrIDNo, szTime, (int)fScore);
 
     //write ID photo
     sprintf(szNameBuf+iPos, ".bmp");

@@ -140,7 +140,7 @@ END
 IDD_CAMERA_DLGPIC DIALOGEX 0, 0, 1024, 768
 STYLE WS_POPUP | WS_VISIBLE
 EXSTYLE WS_EX_APPWINDOW
-FONT 9, "宋体"
+FONT 9, "宋体", 0, 0, 0x1
 BEGIN
     CONTROL         "",IDC_ST_CAM,"Static",SS_BITMAP,75,69,325,220
     CONTROL         "",IDC_ST_IDCHECK,"Static",SS_BITMAP,471,79,52,50
@@ -201,17 +201,20 @@ VS_VERSION_INFO VERSIONINFO
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
-        BLOCK "080404B0"
+        BLOCK "080404b0"
         BEGIN
-            VALUE "CompanyName", "\0"
-            VALUE "FileDescription", "camera Microsoft 基础类应用程序\0"
+            VALUE "Comments", "\0"
+            VALUE "CompanyName", "SanWik tech.\0"
+            VALUE "FileDescription", "SanWik FaceProj\0"
             VALUE "FileVersion", "1, 0, 0, 1\0"
             VALUE "InternalName", "camera\0"
             VALUE "LegalCopyright", "版权所有 (C) 2015\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OriginalFilename", "camera.EXE\0"
+            VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "camera 应用程序\0"
             VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "SpecialBuild", "\0"
         END
     END
     BLOCK "VarFileInfo"

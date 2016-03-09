@@ -75,6 +75,9 @@ CDialogLockTest *pDlgLockTest=NULL;
 #define SYSTEMLOG_FILENAME  "system.log"
 #define FACECMPLOG_FILENAME "FaceCmp.log"
 
+//定义KEEP_PIC_LOG之后保存图片日志
+#define KEEP_PIC_LOG
+
 
 /////////////////////////////////////////////////////////////////////////////
 // CCameraDlg dialog
@@ -1210,7 +1213,7 @@ void CHandlerFaceCmp::Do( void* pData)
     pDlg->SwitchLight(2, false);
     pDlg->SwitchLight(3, false);
 
-    pDlg->KeepCompareInfo();
+    pDlg->KeepCompareInfo(fScore);
 
     if(bCmp)
     {
@@ -1531,8 +1534,12 @@ void CCameraDlg::DetectFace( IplImage* pFrame )
 
 // 保存身份证照片和现场照片，留底
 //
-void CCameraDlg::KeepCompareInfo()
+void CCameraDlg::KeepCompareInfo( float fCurScore)
 {
+#ifndef KEEP_PIC_LOG
+    return;
+#endif
+
     if(!m_logDb.InitOpen(m_strPathLogDB))
     {
         TRACE("***KeepCompareInfo创建数据库失败！\n");
@@ -1553,5 +1560,5 @@ void CCameraDlg::KeepCompareInfo()
         return;
     }
 
-    m_logDb.InsertRec(m_idTextDecoder.GetName(), m_idTextDecoder.GetID(), m_strLastIDPicPath, strFileName);
+    m_logDb.InsertRec(m_idTextDecoder.GetName(), m_idTextDecoder.GetID(), fCurScore, m_strLastIDPicPath, strFileName);
 }

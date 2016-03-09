@@ -34,7 +34,7 @@ CLogDb::~CLogDb()
 bool CLogDb::CanWriteFile( const char* pstrPathLogDB)
 {
     __int64 nFileSize = GetFileSizeByName(pstrPathLogDB);
-    return (-1==nFileSize || (nFileSize>0 && nFileSize<m_MaxFileSizeBytes));
+    return (-1==nFileSize || (nFileSize>=0 && nFileSize<m_MaxFileSizeBytes));
 }
 
 bool CLogDb::InitOpen( const char* pstrPathLogDB )
@@ -152,16 +152,17 @@ bool CLogDb::ExistTable( const char* pstrTab )
 
 // ²åÈëÍ¼Æ¬¼ÇÂ¼
 //
-bool CLogDb::InsertRec( const char* pstrName, const char* pstrID, const char* pstrLastIDPicPath, const char* pstrFileName )
+bool CLogDb::InsertRec( const char* pstrName, const char* pstrID, float fCurScore, const char* pstrLastIDPicPath, const char* pstrFileName )
 {
     if(!LoadBlobData(pstrLastIDPicPath, pstrFileName))
     {
         return false;
     }
 	CString strIns;
-    strIns.Format("INSERT INTO %s(name,IDNo,IDPhoto,LivePhoto) VALUES('%s','%s',?,?)", 
+    strIns.Format("INSERT INTO %s(name,IDNo,RecRate,IDPhoto,LivePhoto) VALUES('%s','%s',%g,?,?)", 
                   DEF_LOG_DB_NAME,
-                  pstrName, pstrID);
+                  pstrName, pstrID,
+                  fCurScore);
 
     sqlite3_stmt* pStmt = NULL;  
     int nRtn = sqlite3_prepare_v2(m_db, strIns, -1, &pStmt, NULL);  
