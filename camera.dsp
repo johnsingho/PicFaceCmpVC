@@ -121,6 +121,10 @@ SOURCE=.\DialogLockTest.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\DlgSetting.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\HeCompare.cpp
 # End Source File
 # Begin Source File
@@ -159,6 +163,10 @@ SOURCE=.\Compare.h
 # Begin Source File
 
 SOURCE=.\DialogLockTest.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\DlgSetting.h
 # End Source File
 # Begin Source File
 

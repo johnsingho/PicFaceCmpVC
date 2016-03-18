@@ -19,7 +19,7 @@
 
 CLogDb::CLogDb()
  : m_db(NULL)
- , m_MaxFileSizeBytes(0)
+ , m_MaxFileSizeBytes(MAX_LOG_DB_SIZE)
 {
 }
 
@@ -27,6 +27,12 @@ CLogDb::~CLogDb()
 {
     CloseDB();
 
+}
+
+
+void CLogDb::SetInitFileName( const char* pstrPathLogDB )
+{
+	m_strLastFileName=pstrPathLogDB;
 }
 
 //是否还能够写这个文件？
@@ -37,17 +43,25 @@ bool CLogDb::CanWriteFile( const char* pstrPathLogDB)
     return (-1==nFileSize || (nFileSize>=0 && nFileSize<m_MaxFileSizeBytes));
 }
 
-bool CLogDb::InitOpen( const char* pstrPathLogDB )
+bool CLogDb::TryOpen()
 {
-    if(m_db){return true;}
-    
-    m_MaxFileSizeBytes = MAX_LOG_DB_SIZE;
-    CString strFileName = pstrPathLogDB;
-    if(!CanWriteFile(pstrPathLogDB))
+    bool bWrite = CanWriteFile(m_strLastFileName);
+    if(m_db)
     {
-        strFileName = GenNextFileName(pstrPathLogDB);
+        if(bWrite)
+        {
+            return true;
+        }else{
+            CloseDB();
+            m_strLastFileName = GenNextFileName(m_strLastFileName);
+        }
     }
-    return OpenDB(strFileName, DEF_LOG_DB_PWD);
+    else if(!bWrite) 
+    {
+           m_strLastFileName = GenNextFileName(m_strLastFileName);
+    }
+        
+    return OpenDB(m_strLastFileName, DEF_LOG_DB_PWD);
 }
 
 CString CLogDb::GenNextFileName( const char* pstrPathLogDB)
@@ -58,7 +72,16 @@ CString CLogDb::GenNextFileName( const char* pstrPathLogDB)
     int iDot = strOldPath.ReverseFind('.');
     if(iDot>0)
     {
-        strPre += strOldPath.Mid(0, iDot);
+        strPre = strOldPath.Mid(0, iDot);
+        int iEnd=strPre.GetLength()-1;
+        for(;iEnd>=0; iEnd--)
+        {
+            if(!isdigit(strPre[iEnd]))
+            {
+                break;
+            }
+        }
+        strPre = strPre.Mid(0,iEnd+1);
         strPos=strOldPath.Mid(iDot);
     }else if(iDot<0){
         strPre=strOldPath;

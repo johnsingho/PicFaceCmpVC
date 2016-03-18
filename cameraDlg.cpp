@@ -6,6 +6,8 @@
 #include "cameraDlg.h"
 #include "comm/misc.h"
 #include "zbar.h"
+#include "DlgSetting.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -78,6 +80,9 @@ CDialogLockTest *pDlgLockTest=NULL;
 //定义KEEP_PIC_LOG之后保存图片日志
 #define KEEP_PIC_LOG
 
+//是否需要人脸识别分数作弊？
+//#define FACE_ZUOBI
+    
 
 /////////////////////////////////////////////////////////////////////////////
 // CCameraDlg dialog
@@ -127,6 +132,7 @@ BEGIN_MESSAGE_MAP(CCameraDlg, CDialog)
 	ON_BN_CLICKED(IDC_BTN_TEST, OnBtnTest)
 	ON_WM_RBUTTONDOWN()
 	//}}AFX_MSG_MAP
+    ON_MESSAGE(WM_HOTKEY, OnHotKey)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -164,6 +170,9 @@ BOOL CCameraDlg::OnInitDialog()
     SetCursorPos(1200,1200);
     ShowCursor(FALSE);
 //#endif
+
+    //Ctrl+F12用来打开配置窗口
+    RegisterHotKey(m_hWnd, 1, MOD_CONTROL/*|0x4000*/, VK_F12);
     
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -229,6 +238,8 @@ void CCameraDlg::OnDestroy()
         delete pDlgLockTest;
     }
 #endif
+
+    UnregisterHotKey(m_hWnd, 1);
 
     if(m_cfgInfo.bReWrite)
     {
@@ -505,6 +516,7 @@ void CCameraDlg::InitVars()
     SwitchCamera(true);
     m_gateBoardOper.Bind(&m_gateBoard);
     m_strPathLogDB = MakeModuleFileName(DEF_LOG_DB_FILENAME);
+    m_logDb.SetInitFileName(m_strPathLogDB);
 }
 
 // bFaceOrTicket
@@ -1264,11 +1276,19 @@ bool CCameraDlg::DoFaceCmp( float* pfScore/*=NULL*/)
         fScore=m_faceDetector.CompareAFace(m_cfgInfo.fInitFaceCmpRate, 0);
     }
     fScore=fScore*100.0;
+
+#ifdef FACE_ZUOBI
+    //人脸识别分数作弊
+    if(fScore>0.0000)
+    {
+        fScore += 9.5786;
+    }
+#endif
+
     CString strScore;
     strScore.Format("人脸识别相似度：%.2f%%", fScore);
     UpdatePromptInfo(strScore);
     TRACE1("***人脸相似度: %s\n", strScore);
-    
     //输出人脸相似度
     if(pfScore){ *pfScore=fScore;}
     return (fScore>=(float)m_cfgInfo.nReqFaceCmpScore);
@@ -1540,7 +1560,7 @@ void CCameraDlg::KeepCompareInfo( float fCurScore)
     return;
 #endif
 
-    if(!m_logDb.InitOpen(m_strPathLogDB))
+    if(!m_logDb.TryOpen())
     {
         TRACE("***KeepCompareInfo创建数据库失败！\n");
         return;
@@ -1562,3 +1582,19 @@ void CCameraDlg::KeepCompareInfo( float fCurScore)
 
     m_logDb.InsertRec(m_idTextDecoder.GetName(), m_idTextDecoder.GetID(), fCurScore, m_strLastIDPicPath, strFileName);
 }
+
+
+LRESULT CCameraDlg::OnHotKey(WPARAM wParam, LPARAM lParam)
+{
+    if(1==wParam)
+    {
+        ShowCursor(TRUE);
+        SetCursorPos(300,300);
+        //打开配置界面
+        CDlgSetting dlgSetting;
+        dlgSetting.SetInfo(&m_cfgInfo);
+        dlgSetting.DoModal();
+    }
+    return 0;
+}
+

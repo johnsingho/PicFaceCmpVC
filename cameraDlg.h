@@ -84,6 +84,7 @@ protected:
 	afx_msg void OnBtnTest();
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	//}}AFX_MSG
+    afx_msg LRESULT OnHotKey(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 public:
     static UINT InitEnvThread(void *param);

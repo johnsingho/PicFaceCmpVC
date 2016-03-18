@@ -63,7 +63,7 @@ BOOL DeleteDir(const TCHAR* pszFolder)
 // 其它，实际文件的字节数
 __int64 GetFileSizeByName(const char*  fileName)
 {
-    HANDLE hFile = CreateFile(fileName, FILE_GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+    HANDLE hFile = CreateFile(fileName, FILE_READ_ATTRIBUTES, 0, NULL, OPEN_EXISTING, 0, NULL);
     if (hFile  == INVALID_HANDLE_VALUE)
     {
         return -1;

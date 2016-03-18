@@ -18,6 +18,7 @@
 #define IDB_BMP_RIGHT                   141
 #define IDD_DIALOG_LOCKTEST             142
 #define IDB_BMP_IDBACK                  142
+#define IDD_DLG_SETTINGS                144
 #define IDC_PICL                        1000
 #define IDC_PICR                        1001
 #define IDC_Open_Camera                 1002
@@ -81,14 +82,21 @@
 #define IDC_BTN_TEST                    1067
 #define IDC_EDIT_INFO                   1068
 #define IDC_ST_TIMESHOW                 1069
+#define IDC_EDIT_IDCOM                  1070
+#define IDC_EDIT_BOARD                  1071
+#define IDC_EDIT_CAMFACE                1072
+#define IDC_EDIT_CAMTICK                1073
+#define IDC_EDIT_CHKFACEMAX             1074
+#define IDC_EDIT_CHKTICKMAX             1075
+#define IDC_EDIT_REQFACESCORE           1076
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        144
+#define _APS_NEXT_RESOURCE_VALUE        145
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1070
+#define _APS_NEXT_CONTROL_VALUE         1071
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

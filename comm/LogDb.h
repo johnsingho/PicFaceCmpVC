@@ -54,7 +54,8 @@ public:
 	~CLogDb();
 
     void CloseDB();
-    bool InitOpen( const char* pstrPathLogDB);
+    void SetInitFileName(const char* pstrPathLogDB);
+    bool TryOpen();
     CString GenNextFileName( const char* pstrPathLogDB );
     bool CanWriteFile( const char* pstrPathLogDB );
     bool OpenDB( CString strFileName, CString strPass);
@@ -64,6 +65,7 @@ public:
 private:    
     bool LoadBlobData( const char* pstrLastIDPicPath, const char* pstrFileName );
 private:
+    CString  m_strLastFileName;
     sqlite3* m_db;
     unsigned int m_MaxFileSizeBytes;
 
